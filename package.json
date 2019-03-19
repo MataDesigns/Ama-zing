@@ -1,0 +1,49 @@
+{
+  "name": "ama-zing",
+  "version": "0.1.0",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "webpack --config webpack.config.js",
+    "test": "jest"
+  },
+  "files": [
+    "lib"
+  ],
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/src/.*\\.spec\\.ts$"
+  },
+  "keywords": [
+    "minimal",
+    "typescript",
+    "boilerplate"
+  ],
+  "author": "Nicholas Mata <nicholas@matadesigns.net>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MataDesigns/Ama-zing.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MataDesigns/Ama-zing/issues"
+  },
+  "homepage": "https://github.com/MataDesigns/Ama-zing#readme",
+  "description": "A library that extends the functionality of basic JS types like Date, Array, ...",
+  "devDependencies": {
+    "@types/jest": "^21.1.5",
+    "jest": "^21.2.1",
+    "ts-jest": "^21.1.4",
+    "ts-loader": "^5.3.3",
+    "typescript": "^2.6.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
