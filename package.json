@@ -1,6 +1,6 @@
 {
-  "name": "ama-zing",
-  "version": "0.1.0",
+  "name": "@matadesigns/ama-zing",
+  "version": "0.1.1",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
@@ -45,5 +45,6 @@
     "typescript": "^2.6.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
-  }
+  },
+  "dependencies": {}
 }

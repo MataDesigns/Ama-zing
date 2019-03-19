@@ -3,8 +3,7 @@ module.exports = {
     devtool: 'source-map',
     entry: './src/index.ts',
     output: {
-      filename: 'bundle.js',
-      format: 'cjs'
+      filename: 'bundle.js'
     },
     resolve: {
       extensions: ['.ts', '.js']

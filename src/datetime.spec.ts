@@ -1,4 +1,4 @@
-import DateTime from './datetime';
+import { DateTime } from './index';
 
 // March 28 2018
 const mar_28_2018DT = new DateTime(2018, 3, 28);
