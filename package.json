@@ -1,7 +1,7 @@
 {
   "name": "@matadesigns/ama-zing",
-  "version": "0.1.1",
-  "main": "./lib/index.js",
+  "version": "0.1.2",
+  "main": "./dist/bundle.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
