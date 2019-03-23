@@ -3,5 +3,8 @@ A  library that extends the function of basic JS types like Date, Array, ...
 
 ## [Documentation](https://matadesigns.github.io/Ama-zing/)
 
+## Install
+`npm install --save @matadesigns/ama-zing`
+
 ## Examples
 Coming soon
