@@ -1,37 +1,24 @@
+/**
+ * @module DateTime
+ */
 import TimeSpan from "./timespan";
-
-export enum DateTimeComponent {
-    year, month, date
-}
 
 export enum DayOfWeek {
     Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
 }
 
-export enum DateTimeKind {
-    Unspecified, Utc, Local
-}
-
-export interface IDateTime {
-    addTicks(value: number): DateTime
-    addDays(value: number): DateTime
-    addHours(value: number): DateTime
-    addMilliseconds(value: number): DateTime
-    addMinutes(value: number): DateTime
-    addMonths(value: number): DateTime
-    addSeconds(value: number): DateTime
-    addYears(value: number): DateTime
-
-    equals(value: DateTime): boolean
-    compareTo(value: DateTime): number
-}
-
+/**
+ * @hidden
+ */
 interface IDatePart {
     year: number
     month: number
     day: number
 }
 
+/**
+ * Represents an instant in time, typically expressed as a date and time of day.
+ */
 export default class DateTime {
     // The data is stored as an unsigned 64-bit integeter
     //   Bits 01-62: The value of 100-nanosecond ticks where 0 represents 1/1/0001 12:00am, up until the value
@@ -166,13 +153,50 @@ export default class DateTime {
         return this.internalTicks
     }
 
+    /**
+     * Initializes a new instance of the DateTime to the current date and time.
+     */
+    public constructor()
+    /**
+     * Initializes a new instance of the DateTime to a specified number of ticks.
+     * @param ticks A date and time expressed in the number of 100-nanosecond 
+     * intervals that have elapsed since January 1, 0001 at 00:00:00.000 in 
+     * the Gregorian calendar.
+     */
     public constructor(ticks: number)
     public constructor(date: Date)
+    /**
+     * Initializes a new instance of the DateTime to the specified year, month, and day.
+     * @param year The year (1 through 9999).
+     * @param month The month (1 through 12).
+     * @param day The day (1 through the number of days in month).
+     */
     public constructor(year: number, month: number, day: number)
+    /**
+     * Initializes a new instance of the DateTime to the 
+     * specified year, month, day, hour, minute, and second.
+     * @param year The year (1 through 9999).
+     * @param month The month (1 through 12).
+     * @param day The day (1 through the number of days in month).
+     * @param hour The hours (0 through 23).
+     * @param minute The minutes (0 through 59).
+     * @param second The seconds (0 through 59).
+     */
     public constructor(year: number, month: number, day: number, hour: number, minute: number, second: number)
+    /**
+     * Initializes a new instance of the DateTime to the 
+     * specified year, month, day, hour, minute, second, and millisecond.
+     * @param year The year (1 through 9999).
+     * @param month The month (1 through 12).
+     * @param day The day (1 through the number of days in month).
+     * @param hour The hours (0 through 23).
+     * @param minute The minutes (0 through 59).
+     * @param second The seconds (0 through 59).
+     * @param millisecond The milliseconds (0 through 999).
+     */
     public constructor(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number)
-    public constructor(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number, kind: DateTimeKind)
-    constructor(year: number | Date, month?: number, day?: number, hour?: number, minute?: number, second?: number, millisecond?: number, kind: DateTimeKind = DateTimeKind.Unspecified) {
+    public constructor(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number)
+    constructor(year?: number | Date, month?: number, day?: number, hour?: number, minute?: number, second?: number, millisecond?: number) {
         let ticks = 0
         if (typeof year === 'number') {
             if (month && day) {
@@ -181,6 +205,9 @@ export default class DateTime {
                 ticks = year
             }
         } else {
+            if(year == null) {
+                year = new Date()
+            }
             const date = year;
             year = date.getFullYear();
             month = date.getMonth() + 1;
@@ -191,7 +218,7 @@ export default class DateTime {
             ticks = DateTime.DateToTicks(year, month, day);
         }
 
-        if (hour != null && minute != null && second != null) {
+        if (hour && minute && second) {
             ticks += DateTime.TimeToTicks(hour, minute, second)
         }
 
@@ -263,7 +290,7 @@ export default class DateTime {
      * @param scale The scale of the value. ie DateTime.MillisPerDay
      */
     private add(value: number, scale: number): DateTime {
-        let millis = (value * scale + (value >= 0 ? 0.5 : -0.5));
+        let millis = (value * scale);
         if (millis <= -DateTime.MaxMillis || millis >= DateTime.MaxMillis)
             throw 'Out of Range '
         return this.addTicks(millis * DateTime.TicksPerMillisecond);
@@ -499,14 +526,28 @@ export default class DateTime {
         let day = n - days[m - 1] + 1;
         return { year, month, day }
     }
-
+    /**
+     * Checks whether a DateTime or Date is equal to current instance.
+     * @param value The object to compare to this instance.
+     * @return true if the value parameter equals the value of 
+     * this instance; otherwise, false.
+     */
     public equals(value: DateTime | Date): boolean {
         if (value instanceof Date) {
             value = new DateTime(value);
         }
         return this.internalTicks == value.internalTicks;
     }
-
+    /**
+     * Compares two DateTimes.
+     * @param value The DateTime to compare to the current instance.
+     * @returns A signed number indicating the relative values of this
+     * instance and the value parameter.
+     * | Value | Description                         |
+     * | -1    | This instance is earlier than value |
+     * |  0    | This instance is same as value      |
+     * |  1    | This instance is greater than value | 
+     */
     public compareTo(value: DateTime): number {
         const valueTicks = value.internalTicks;
         const ticks = this.internalTicks;
@@ -515,10 +556,21 @@ export default class DateTime {
         return 0;
     }
 
+    /**
+     * Subtracts two DateTimes.
+     * @param value The date and time value to subtract.
+     * @returns A time interval that is equal to the date and time 
+     * represented by this instance minus the date and time of the value.
+     */
     public subtract(value: DateTime): TimeSpan {
         return new TimeSpan(this.internalTicks - value.internalTicks);
     }
-
+    /**
+     * Subtracts the specified duration from this instance
+     * @param value The time interval to subtract.
+     * @returns An object that is equal to the date and time 
+     * represented by this instance minus the time interval represented by
+     */
     public subtractTime(value: TimeSpan): DateTime {
         const ticks = this.internalTicks;
         const valueTicks = value.ticks;
@@ -650,49 +702,42 @@ export default class DateTime {
     }
 
     /**
-     * Turns DateTime into a string with in the specified format.
+     * Turns DateTime into a string with the specified format.
      * 
-     * Patterns   Format   Description                                     Example
-     * ========== =======  ==========================                      =========
-     *  "h"       "0"      12 hour w/o leading zero                        3
-     *  "hh"      "00"     12 hour with leading zero                       03
-     *  "hh*"     "00"     12 hour with leading zero                       03
-     *                     
-     *  "H"       "0"      24 hour w/o leading zero                        8
-     *  "HH"      "00"     24 hour with leading zero                       08
-     *  "HH*"     "00"     24 hour with leading zero                       08
-     *                     
-     *  "m"       "0"      minute w/o leading zero                         1
-     *  "mm"      "00"     minute with leading zero                        01
-     *  "mm*"     "00"     minute with leading zero                        01
-     *                     
-     *  "s"       "0"      second w/o leading zero                         1
-     *  "ss"      "00"     second with leading zero                        01
-     *  "ss*"     "00"     second with leading zero                        01
-     *            
-     *  "t"       "0"      first character of AM/PM designator             1
-     *  "tt"      "00"     AM/PM designator                                01
-     *  "tt*"     "00"     AM/PM designator                                01
-     *            
-     *  "d"       "0"      day w/o leading zero                            1
-     *  "dd"      "00"     day with leading zero                           01
-     *  "ddd"              short weekday name (abbreviation)               Mon
-     *  "dddd"             full weekday name                               Monday
-     *  "dddd*"            full weekday name                               Monday
-     *            
-     *  "M"       "0"      month w/o leading zero                          2
-     *  "MM"      "00"     month with leading zero                         02
-     *  "MMM"              short month name (abbreviation)                 Feb
-     *  "MMMM"             full month name                                 Febuary
-     *  "MMMM*"            full month name                                 Febuary
+     * | Patterns        | Format  | Description                                     | Example |
+     * | --------------- | ------- | ------------------------------------------------| ------- |
+     * | h               | 0       | 12 hour w/o leading zero                        | 3       |
+     * | hh              | 00      | 12 hour with leading zero                       | 03      |
+     * | hh*             | 00      | 12 hour with leading zero                       | 03      |
+     * | H               | 0       | 24 hour w/o leading zero                        | 8       |
+     * | HH              | 00      | 24 hour with leading zero                       | 08      |
+     * | HH*             | 00      | 24 hour with leading zero                       | 08      |
+     * | m               | 0       | minute  w/o leading zero                        | 1       |
+     * | mm              | 00      | minute  with leading zero                       | 01      |
+     * | mm*             | 00      | minute  with leading zero                       | 01      |
+     * | s               | 0       | second  w/o leading zero                        | 5       |
+     * | ss              | 00      | second  with leading zero                       | 05      |
+     * | ss*             | 00      | second  with leading zero                       | 05      |
+     * | t               | -       | first character of AM/PM designator             | A/P     |
+     * | tt              | -       | AM/PM designator                                | AM/PM   |
+     * | tt*             | -       | AM/PM designator                                | AM/PM   |
+     * | d               | 0       | day w/o leading zero                            | 1       |
+     * | dd              | 00      | day with leading zero                           | 01      |
+     * | ddd             | -       | short weekday name (abbreviation)               | Mon     |
+     * | dddd            | -       | full weekday name                               | Monday  |
+     * | dddd*           | -       | full weekday name                               | Monday  |
+     * | M               | 0       | month w/o leading zero                          | 2       |
+     * | MM              | 00      | month with leading zero                         | 02      |
+     * | MMM             | -       | short month name (abbreviation)                 | Feb     |
+     * | MMMM            | -       | full month name                                 | February|
+     * | MMMM*           | -       | full month name                                 | February|
+     * | y               | 0       | two digit year (year % 100) w/o leading zero    | 1       |
+     * | yy              | 00      | two digit year (year % 100) with leading zero   | 01      |
+     * | yyyy            | 0000    | full year                                       | 2019    |
+     * | yyyy*           | 0000    | full year                                       | 2019    |
+     * | '...'           | -       | quoted string, ignore matching values           | 'ABC'   |
      * 
-     *  "y"       "0"      two digit year (year % 100) w/o leading zero    1
-     *  "yy"      "00"     two digit year (year % 100) with leading zero   01
-     *  "yyyy"    "00"     full year                                       2000
-     *  "yyyy*"   "00"     full year                                       2000
-     * 
-     *  "'"                quoted string                                   'ABC' will insert ABC into the formatted string.
-     * 
+     *
      * @param format The format you would like the string in
      */
     toString(format: string = 'yyyy-MM-ddTHH:mm:ss'): string {
@@ -726,10 +771,22 @@ export default class DateTime {
 
     }
 
+    /**
+     * DateTime as Javascript Date
+     * @returns A Javascript Date object that represent this DateTime instance.
+     */
+    public toDate(): Date {
+        return new Date(this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond)
+    }
+
+    /**
+     * @hidden
+     */
     [Symbol.toPrimitive](hint: string): string | number {
-        if (hint == 'string') {
-            return '';
+        if (hint == 'number') {
+            return this.ticks;
         }
-        return this.ticks;
+        
+        return this.toString();
     }
 }

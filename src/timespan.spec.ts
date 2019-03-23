@@ -1,4 +1,4 @@
-import TimeSpan, { TimeSpanComponent } from "./timespan";
+import TimeSpan from "./timespan";
 
 describe("Comparsions", () => {
     describe("TimeSpan TimeSpan Comparision", () => {
