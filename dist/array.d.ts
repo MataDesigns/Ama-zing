@@ -3,6 +3,3 @@ interface Array<T> {
         [key: string]: [T];
     };
 }
-declare function groupBy<T extends any>(this: Array<T>, key: string): {
-    [key: string]: [T];
-};
