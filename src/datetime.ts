@@ -2,7 +2,11 @@
  * @module DateTime
  */
 import TimeSpan from "./timespan";
+import "./number"
 
+/**
+ * Specifies the day of the week
+ */
 export enum DayOfWeek {
     Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
 }
@@ -580,12 +584,6 @@ export default class DateTime {
         return new DateTime((ticks - valueTicks));
     }
 
-    private pad(num: number, size?: number): string {
-        var s = String(num);
-        while (s.length < (size || 2)) { s = '0' + s; }
-        return s;
-    }
-
     private static formatChars = ['h', 'H', 'M', 'm', 't', 's', 'y', 'd', '*']
 
     private weekdayName(day: DayOfWeek, abbrev: boolean = false): string {
@@ -656,7 +654,7 @@ export default class DateTime {
             case 'HH':
             case 'hh*':
             case 'hh':
-                return this.pad(hour12)
+                return hour12.pad()
             case 'H':
             case 'h':
                 return String(hour24)
@@ -671,7 +669,7 @@ export default class DateTime {
             case 'MMM':
                 return this.monthName(month, true)
             case 'MM':
-                return this.pad(month)
+                return month.pad()
             case 'M':
                 return  String(month)
             case 'dddd*':
@@ -680,22 +678,22 @@ export default class DateTime {
             case 'ddd':
                 return this.weekdayName(dayOfWeek, true)
             case 'dd':
-                return this.pad(day)
+                return day.pad()
             case 'd':
                 return String(day)
             case 'mm*':
             case 'mm':
-                return this.pad(minute)
+                return minute.pad()
             case 'm':
-                return String(minute);
+                return String(minute)
             case 'ss*':
             case 'ss':
-                return this.pad(second);
+                return second.pad()
             case 's':
-                return String(second);
+                return String(second)
             default:
                 if (format.indexOf('y') != -1) {
-                    return this.pad(year, format.length);
+                    return year.pad(format.length)
                 }
                 return '';
         }

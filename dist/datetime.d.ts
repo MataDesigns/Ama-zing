@@ -2,6 +2,10 @@
  * @module DateTime
  */
 import TimeSpan from "./timespan";
+import "./number";
+/**
+ * Specifies the day of the week
+ */
 export declare enum DayOfWeek {
     Sunday = 0,
     Monday = 1,
@@ -274,7 +278,6 @@ export default class DateTime {
      * represented by this instance minus the time interval represented by
      */
     subtractTime(value: TimeSpan): DateTime;
-    private pad;
     private static formatChars;
     private weekdayName;
     private monthName;
