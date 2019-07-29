@@ -157,6 +157,15 @@ export default class DateTime {
         return this.internalTicks
     }
 
+    public get date(): DateTime {
+        var ticks = this.internalTicks;
+        return new DateTime((ticks - ticks % DateTime.TicksPerDay))
+    }
+
+    public get timeOfDay(): TimeSpan {
+        return new TimeSpan(this.internalTicks % DateTime.TicksPerDay)
+    }
+
     /**
      * Initializes a new instance of the DateTime to the current date and time.
      */
